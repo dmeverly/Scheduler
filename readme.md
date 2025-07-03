@@ -4,12 +4,11 @@
 **Language**: Python  
 **Version**: 1 
 
+<a href="https://www.dmeverly.com/completedprojects/Scheduler/" style="display: block; text-align:right;" target = "_blank">  Project Overview -> </a> 
 ---
 
 ## Description  
 Script reads a schedule from template.xlsx and writes an employee schedule based using the template on a standard monthly calendar. Client requested this project to support 3 shifts per day with 2 on dayshift and 1 on nightshift.
-
-<a href="https://www.dmeverly.com/completedprojects/Scheduler/" style="display: block; text-align:right;" target = "_blank">  Project Overview -> </a> 
 
 ## Table of Contents
 - [Installation](#installation)
