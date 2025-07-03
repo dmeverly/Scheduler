@@ -4,7 +4,7 @@
 **Language**: Python  
 **Version**: 1 
 
-<a href="https://www.dmeverly.com/completedprojects/Scheduler/" style="display: block; text-align:right;" target = "_blank">  Project Overview -> </a> 
+### <a href="https://www.dmeverly.com/completedprojects/Scheduler/" style="display: block; text-align:right;" target = "_blank">  Project Overview -> </a> 
 ---
 
 ## Description  
