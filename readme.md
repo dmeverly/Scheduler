@@ -53,7 +53,8 @@ Starting Year: 2025
 Schedule saved as Schedule.xlsx
 ```
 
-<iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vRhSfov48lHD9mZk3m05FcPiqS9fAAVw-penkR9oDgX4RjbmHX2TzpdzqAl9daO_F8v2RHPXxekbIQP/pubhtml?widget=true&amp;headers=false"></iframe>
+[View the final schedule](https://docs.google.com/spreadsheets/d/e/2PACX-1vRhSfov48lHD9mZk3m05FcPiqS9fAAVw-penkR9oDgX4RjbmHX2TzpdzqAl9daO_F8v2RHPXxekbIQP/pubhtml)
+
 
 ## Future Work and Extension  
 This project is part of a larger initiative, which was to generate a rotating template and then automate transcription of the template onto a monthly calendar.  See templater.py for more details.  The natural next step is to integrate the programs for a complete, end-to-end program which generates a template meeting employee constraints and produces a schedule with minimal user input.  This is best achieved by extending the scheduler.py script to take dataframe input, rather than .xlsx input, and map the calendar from there.
