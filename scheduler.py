@@ -103,7 +103,7 @@ def createSheet(d1, d2, n, weekNumber, month, year, Styles, wb):
     return weekNumber
 
 def preProcess(df):
-    df = df.drop([0, 1, 14, 15])
+    df = df.drop([0, 1])
     df = df.drop([0, 8, 16], axis=1)
     df.columns = list(range(21))
     df.index = list(range(1, 13))
