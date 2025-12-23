@@ -1,75 +1,85 @@
-# Scheduler
+# Scheduler (Workflow Integration)
 
 **Author**: David Everly  
 **Language**: Python  
-**Version**: 1 
+**Domain**: Workflow Engineering / Operational Systems  
+**Status**: Stable
 
-### <a href="https://www.dmeverly.com/completedprojects/Scheduler/" style="display: block; text-align:right;" target = "_blank">  Project Overview -> </a> 
 ---
 
-## Description  
-Script reads a schedule from template.xlsx and writes an employee schedule based using the template on a standard monthly calendar. Client requested this project to support 3 shifts per day with 2 on dayshift and 1 on nightshift.
+## Description
 
-## Table of Contents
-- [Installation](#installation)
-- [Usage](#usage)
-- [Features](#features)
-- [Configuration](#configuration)
-- [Examples](#examples)
-- [Future Work and Extension](#future-work-and-extension)
-- [References](#references)
-- [Contributing](#contributing)
-- [Licenses](#licenses)
+This project implements the **execution layer** of a scheduling system, responsible for transforming abstract schedule templates into concrete, calendar-aligned artifacts suitable for operational use.
 
-## Installation
-Dependencies:   
-pandas
-openpyxl
+Where upstream components focus on constraint reasoning and feasibility, this system prioritizes **correctness, formatting integrity, and repeatability**, ensuring that algorithmic outputs can be reliably consumed by end users.
 
-# Usage
-Program is intended to be run using Unix-like terminal such as Linux, macOS Terminal (untested), or MINGW64 (Git Bash) on Windows.  
+---
 
-Run the script with: 
-```bash 
-python scheduler.py
-```    
-Or use the provided shell script:    
-```bash
-./run  
-```
+## Why This Exists
 
-## Features  
-At runtime, queries the user on command line for starting template week number, starting month number, and starting year.  Output to Schedule.xlsx a formatted schedule
+Optimization systems often stop at producing a “solution” without addressing how that solution is operationalized.
 
-## Configuration  
-Pre-processing details are hardcoded and specific to the format defined in Template.xlsx.  Future modification must either keep with the current format, or extend this script to support alternative formats.
+This project exists to bridge that gap by:
 
-## Examples  
+- mapping abstract scheduling templates onto real calendar structures
+- enforcing consistent formatting and structure
+- producing artifacts that can be directly used in workflows
 
-```bash
-$ ./run
-Template Week Number: 1
-Starting Month Number: 7
-Starting Year: 2025
-Schedule saved as Schedule.xlsx
-```
+The result is a clean separation between **planning logic** and **execution logic**.
 
-[View the final schedule](https://docs.google.com/spreadsheets/d/e/2PACX-1vRhSfov48lHD9mZk3m05FcPiqS9fAAVw-penkR9oDgX4RjbmHX2TzpdzqAl9daO_F8v2RHPXxekbIQP/pubhtml)
+---
 
+## System Responsibilities
 
-## Future Work and Extension  
-This project is part of a larger initiative, which was to generate a rotating template and then automate transcription of the template onto a monthly calendar.  See templater.py for more details.  The natural next step is to integrate the programs for a complete, end-to-end program which generates a template meeting employee constraints and produces a schedule with minimal user input.  This is best achieved by extending the scheduler.py script to take dataframe input, rather than .xlsx input, and map the calendar from there.
+- Load predefined scheduling templates
+- Collect minimal runtime configuration
+- Translate template representations into calendar-aligned schedules
+- Produce formatted spreadsheet artifacts for operational use
 
-## References  
-No external sources were used. However, LLM queries assisted with architectural design and debugging.  
+This system intentionally does **not** perform optimization or constraint solving.
 
-## Contributing  
-No external parties contributed to this project.  
+---
 
-## Licenses  
-None
+## Architecture Summary
 
-## Disclaimer  
-This project was developed independently on personal time and is not affiliated with or endorsed by any employer or healthcare organization.  
-All data used is publicly available and non-identifiable.  
-All opinions and methods reflect personal research and experimentation.
+- **Input**: Structured scheduling templates (e.g., `template.xlsx`)
+- **Processing**: Deterministic mapping and validation logic
+- **Output**: Calendar-aligned schedule artifacts (e.g., `Schedule.xlsx`)
+
+The system is designed to be deterministic and repeatable, producing the same output for the same input configuration.
+
+---
+
+## What This Project Demonstrates
+
+- Separation of planning and execution concerns  
+- Workflow-oriented system design  
+- Attention to correctness and formatting as first-class requirements  
+- Completing systems beyond algorithmic outputs  
+
+---
+
+## Limitations and Non-Goals
+
+- No optimization or scheduling intelligence
+- No dynamic or interactive scheduling
+- No persistence or state management beyond file outputs
+
+These constraints are intentional and reflect the system’s role as a downstream execution layer.
+
+---
+
+## Relationship to Other Projects
+
+This project is designed to operate downstream of:
+
+- **Schedule Templater**, which generates feasible scheduling templates under complex constraints
+
+Together, these projects illustrate a multi-stage system where planning and execution are explicitly decoupled.
+
+---
+
+## Disclaimer
+
+This project was developed independently on personal time and is not affiliated with or endorsed by any employer.  
+All data and examples are illustrative and non-production.
