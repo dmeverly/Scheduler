@@ -33,10 +33,7 @@ def createSheet(d1, d2, n, weekNumber, month, year, Styles, wb):
         ws.merge_cells(start_row=3, start_column=col, end_row=3, end_column=col + 1)
         ws.cell(row=3, column=col).font = Styles.get('day')
         ws.cell(row=3, column=col).alignment = Styles.get('center')
-
-    #day indexed 0-6 Monday-Sunday
     monthStartDay, monthLength = calendar.monthrange(year, month)
-    #add one day so index 0-6 Sunday-Saturday
     monthStartDay += 1
     if monthStartDay > 6:
         monthStartDay = 0
@@ -54,11 +51,17 @@ def createSheet(d1, d2, n, weekNumber, month, year, Styles, wb):
             if date > monthLength:
                 break
 
-            d1_emp = d1[templateDay][weekNumber]
+            d1_emp = d1[templateDay][weekNumber].capitalize()
+            n_emp = n[templateDay][weekNumber].capitalize()
+
             d2_emp = d2[templateDay][weekNumber]
-            n_emp = n[templateDay][weekNumber]
- 
-            shift_text = f"{date}\n{d1_emp} - Day\n{d2_emp} - Day\n{n_emp} - Night"
+            if d2_emp == None:
+                shift_text = f"{date}\n{d1_emp} - Day\n\n{n_emp} - Night"
+            else:
+                d2_emp = d2_emp.capitalize()
+                shift_text = f"{date}\n{d1_emp} - Day\n{d2_emp} - Day\n{n_emp} - Night"
+
+
             if day == 6:
                 shift_text += f"\nTemplate Week {weekNumber}"
                 shift_text += " - Dr. Amin" if alternate == 0 else ""
@@ -77,7 +80,7 @@ def createSheet(d1, d2, n, weekNumber, month, year, Styles, wb):
             if templateDay > 6:
                 templateDay = 0
                 weekNumber += 1
-                if weekNumber > 12:
+                if weekNumber > 14:
                     weekNumber = 1
 
     for row in range(3, 4 + weeksInMonth):
@@ -104,11 +107,10 @@ def createSheet(d1, d2, n, weekNumber, month, year, Styles, wb):
 
 def preProcess(df):
     df = df.drop([0, 1])
-    df = df.drop([0, 8, 16], axis=1)
+    df = df.iloc[:14, :]
+    df = df.drop([0, 8, 16, 24], axis=1)
     df.columns = list(range(21))
-    df.index = list(range(1, 13))
-
-    #days index 0-6 sunday-saturday, weeks index 1-12
+    df.index = list(range(1, 15))
     d1 = df.iloc[:, :7]
     d1.columns = list(range(7))
     d2 = df.iloc[:, 7:14]
@@ -126,7 +128,7 @@ def queryInput(string, type):
             while(not valid):
                 try:
                     value = int(keyboard)
-                    if value > 0 and value < 13:
+                    if value > 0 and value < 15:
                         valid = True
                 except:
                     print("Invalid Entry")
