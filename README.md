@@ -124,6 +124,8 @@ If parameters are omitted, user is prompted for input runtime
 - No persistence beyond file outputs
 - These constraints are intentional and reflect the system’s role as a downstream execution layer.
 
+---
+
 ## Relationship to Other Projects
 
 This project operates downstream of:
@@ -131,6 +133,8 @@ This project operates downstream of:
 - Schedule Templater, which generates feasible scheduling templates under complex constraints
 
 Together, these projects illustrate a multi-stage system where planning and execution are explicitly decoupled.
+
+---
 
 ## Disclaimer
 
