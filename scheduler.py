@@ -4,18 +4,21 @@ from openpyxl.styles import Font, Alignment, Border, Side, PatternFill
 import pandas as pd
 import calendar
 import math
+from datetime import datetime
+import sys
 
-INPUT = "Template.xlsx"
-OUTPUT = "Schedule.xlsx"
-DOW = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+TIME =  datetime.now().strftime("%Y-%m-%d-%H-%M")
+INPUT = "./input-output/Template.xlsx"
+OUTPUT = "./input-output/Schedule_"+TIME+".xlsx"
+DOW = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 numMonths = 12
 
-def readXlsx():
-    workbook = openpyxl.load_workbook(INPUT)
+def readXlsx(input_path=INPUT):
+    workbook = openpyxl.load_workbook(input_path)
     workspace = workbook.active
     dataFrame = list(workspace.iter_rows(values_only=True))
     df = pd.DataFrame(data=dataFrame, dtype=str)
-    return df
+    return df, workspace
 
 def createSheet(d1, d2, n, weekNumber, month, year, Styles, wb):
     title = f"{calendar.month_name[month]} {year}"
@@ -34,9 +37,7 @@ def createSheet(d1, d2, n, weekNumber, month, year, Styles, wb):
         ws.cell(row=3, column=col).font = Styles.get('day')
         ws.cell(row=3, column=col).alignment = Styles.get('center')
     monthStartDay, monthLength = calendar.monthrange(year, month)
-    monthStartDay += 1
-    if monthStartDay > 6:
-        monthStartDay = 0
+    monthStartDay = (monthStartDay) % 7
     weeksInMonth = math.ceil((monthStartDay + monthLength) / 7)
     startColumn = (monthStartDay * 2) + 1
     date = 1
@@ -55,7 +56,7 @@ def createSheet(d1, d2, n, weekNumber, month, year, Styles, wb):
             n_emp = n[templateDay][weekNumber].capitalize()
 
             d2_emp = d2[templateDay][weekNumber]
-            if d2_emp == None:
+            if d2_emp == None or d2_emp == 'x':
                 shift_text = f"{date}\n{d1_emp} - Day\n\n{n_emp} - Night"
             else:
                 d2_emp = d2_emp.capitalize()
@@ -105,6 +106,21 @@ def createSheet(d1, d2, n, weekNumber, month, year, Styles, wb):
 
     return weekNumber
 
+def addTemplate(template, wb):
+    title = "Template"
+    ws = wb.create_sheet(title=title)
+
+    for row in template.iter_rows(values_only=True):
+        ws.append(row)
+
+    for ridx, row in enumerate(
+        template.iter_rows(min_row=1, max_row=template.max_row,
+                           min_col=1, max_col=template.max_column),
+        start=1
+    ):
+        for cidx, cell in enumerate(row, start=1):
+            ws.cell(row=ridx, column=cidx).fill = cell.fill.copy()
+
 def preProcess(df):
     df = df.drop([0, 1])
     df = df.iloc[:14, :]
@@ -151,11 +167,22 @@ def queryInput(string, type):
     return value
 
 if __name__ == "__main__":
-    d1, d2, n = preProcess(readXlsx())
+    print(len(sys.argv))
+    df, template = readXlsx()
+    d1, d2, n = preProcess(df)
 
-    weekNumber = queryInput("Template Week Number: ", "week")
-    monthStart = queryInput("Starting Month Number: ", "month")
-    year = queryInput("Starting Year: ", "year")
+    if len(sys.argv) == 4:
+        weekNumber = int(sys.argv[1])
+        monthStart = int(sys.argv[2])
+        year = int(sys.argv[3])
+        print("Using Default Input Values")
+        print(f"Template Week Number: {weekNumber}")
+        print(f"Starting Month Number: {monthStart}")
+        print(f"Starting Year: {year}")
+    else:
+        weekNumber = queryInput("Template Week Number: ", "week")
+        monthStart = queryInput("Starting Month Number: ", "month")
+        year = queryInput("Starting Year: ", "year")
 
     Styles = {
         'month': Font(name="Arial", size=14, bold=True),
@@ -168,6 +195,7 @@ if __name__ == "__main__":
 
     wb = Workbook()
     month = monthStart
+    addTemplate(template, wb)
     for i in range(numMonths):
         if month == 13:
             month = 1
