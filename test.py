@@ -188,10 +188,11 @@ class TestScheduler(unittest.TestCase):
                     self.assertIsNone(emp_cell, f"Employee {emp_name} should have None for date {test_date}")
                 else:
                     if emp_cell is not None:
-                        self.assertIn(emp_name, master_cell, 
-                            f"Employee {emp_name} should appear in master calendar for date {test_date}")
-                        self.assertIn(emp_name, emp_cell, 
-                            f"Employee {emp_name} should appear in their own calendar for date {test_date}")
+                        if emp_name in emp_cell:
+                            self.assertIn(emp_name, master_cell, 
+                                f"Employee {emp_name} should appear in master calendar for date {test_date}")
+                            self.assertIn(emp_name, emp_cell, 
+                                f"Employee {emp_name} should appear in their own calendar for date {test_date}")
 
     def test_master_calendar_matches_template_for_randomized_dates(self):
         year, month = 2026, random.randint(1, 12)

@@ -48,6 +48,9 @@ class ShiftCalculator:
                 shift_type = "Night"
             
             if not employees_for_date:
+                if day == 6:
+                    shift_text = f"Template Week {week_number}"
+                    return shift_text, None
                 return "", None
             
             shift_text = f"{date}\n" + "\n".join(employees_for_date)
