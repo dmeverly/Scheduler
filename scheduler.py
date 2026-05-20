@@ -11,7 +11,8 @@ TIME = datetime.now().strftime("%Y-%m-%d-%H-%M")
 INPUT = "./input-output/Template.xlsx"
 OUTPUT = "./input-output/Schedule_" + TIME + ".xlsx"
 DOW = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-numMonths = 12
+NUM_MONTHS = 12
+TEMPLATE_WEEKS = 12
 
 
 class StyleManager:
@@ -230,7 +231,7 @@ def createSheet(d1, d2, n, weekNumber, month, year, Styles, wb, employee_workboo
             if template_day > 6:
                 template_day = 0
                 weekNumber += 1
-                if weekNumber > 14:
+                if weekNumber > TEMPLATE_WEEKS:
                     weekNumber = 1
     
     sheet.format_sheet(ws)
@@ -301,7 +302,7 @@ def queryInput(string, type):
             while(not valid):
                 try:
                     value = int(keyboard)
-                    if value > 0 and value < 15:
+                    if value > 0 and value <= TEMPLATE_WEEKS:
                         valid = True
                 except:
                     print("Invalid Entry")
@@ -309,7 +310,7 @@ def queryInput(string, type):
             while(not valid):
                 try:
                     value = int(keyboard)
-                    if value > 0 and value < 13:
+                    if value > 0 and value <= 12:
                         valid = True
                 except:
                     print("Invalid Entry")
@@ -317,7 +318,7 @@ def queryInput(string, type):
             while(not valid):
                 try:
                     value = int(keyboard)
-                    if value > 2024 and value < 2030:
+                    if value > 2024 and value < 2050:
                         valid = True
                 except:
                     print("Invalid Entry")
@@ -348,7 +349,7 @@ if __name__ == "__main__":
     wb = Workbook()
     month = monthStart
     addTemplate(template, wb)
-    for i in range(numMonths):
+    for i in range(NUM_MONTHS):
         if month == 13:
             month = 1
             year += 1

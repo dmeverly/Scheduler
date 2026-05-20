@@ -8,6 +8,22 @@ MAJOR.MINOR.PATCH
 
 ---
 
+## [1.1.1] - 2026-05-20
+
+### Changed
+
+- Minor code refactor to support templates with different number of weeks per cycle
+
+### Added
+
+- venv support
+
+### Technical Notes
+
+- Refactored week magic numbers to constant
+
+---
+
 ## [1.1.0] - 2026-02-15
 
 ### Changed
