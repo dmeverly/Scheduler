@@ -6,7 +6,16 @@ import random
 import os
 import glob
 
-from scheduler import readXlsx, preProcess, createSheet, addTemplate, DOW, extractEmployees, initializeEmployeeWorkbooks
+from scheduler import (
+    readXlsx,
+    preProcess,
+    createSheet,
+    addTemplate,
+    DOW,
+    extractEmployees,
+    initializeEmployeeWorkbooks,
+    normalize_employee,
+)
 
 
 def cell_for_date(month_start_day, date):
@@ -212,21 +221,9 @@ class TestScheduler(unittest.TestCase):
             week_for_date = template_week_for_date(initial_week, month_start_day, test_date)
             is_sunday = template_day == 6
             
-            d1_emp = self.d1[template_day][week_for_date]
-            if d1_emp:
-                d1_emp = str(d1_emp).strip().capitalize()
-            
-            n_emp = self.n[template_day][week_for_date]
-            if n_emp:
-                n_emp = str(n_emp).strip().capitalize()
-            
-            d2_emp = self.d2[template_day][week_for_date]
-            if d2_emp:
-                d2_emp = str(d2_emp).strip()
-                if d2_emp and d2_emp.lower() != 'x':
-                    d2_emp = d2_emp.capitalize()
-                else:
-                    d2_emp = None
+            d1_emp = normalize_employee(self.d1[template_day][week_for_date])
+            n_emp = normalize_employee(self.n[template_day][week_for_date])
+            d2_emp = normalize_employee(self.d2[template_day][week_for_date])
             
             cell_value = ws.cell(row=row, column=col).value
             
@@ -271,6 +268,23 @@ class TestScheduler(unittest.TestCase):
             
             total_shifts = has_day_shift + has_night_shift
             self.assertGreater(total_shifts, 0, f"Employee {emp_name} should have at least one shift")
+
+    def test_blank_template_cells_do_not_create_nan_employee(self):
+        employees = extractEmployees(self.d1, self.d2, self.n)
+
+        self.assertNotIn("Nan", employees)
+
+    def test_master_calendar_does_not_show_nan(self):
+        wb = openpyxl.Workbook()
+        addTemplate(self.template, wb)
+
+        createSheet(self.d1, self.d2, self.n, 1, 1, 2026, self.styles, wb)
+        ws = wb["January 2026"]
+
+        for row in range(4, 10):
+            for col in range(1, 14, 2):
+                cell_value = ws.cell(row=row, column=col).value
+                self.assertNotIn("nan", str(cell_value).lower())
 
     def test_master_calendar_created_with_all_sheets(self):
         wb = openpyxl.Workbook()

@@ -52,14 +52,24 @@ class ShiftCalculator:
                 if day == 6:
                     shift_text = f"Template Week {week_number}"
                     return shift_text, None
-                return "", None
+                return " ", None
             
             shift_text = f"{date}\n" + "\n".join(employees_for_date)
         else:
-            if not d2_emp or d2_emp == 'x':
+            if d1_emp and n_emp and not d2_emp:
                 shift_text = f"{date}\n{d1_emp} - Day\n\n{n_emp} - Night"
             else:
-                shift_text = f"{date}\n{d1_emp} - Day\n{d2_emp} - Day\n{n_emp} - Night"
+                assignment_lines = []
+                if d1_emp:
+                    assignment_lines.append(f"{d1_emp} - Day")
+                if d2_emp:
+                    assignment_lines.append(f"{d2_emp} - Day")
+                if n_emp:
+                    assignment_lines.append(f"{n_emp} - Night")
+
+                shift_text = f"{date}"
+                if assignment_lines:
+                    shift_text += "\n" + "\n".join(assignment_lines)
         
         if day == 6:
             shift_text += f"\nTemplate Week {week_number}"
@@ -152,6 +162,17 @@ def readXlsx(input_path=INPUT):
     return df, workspace
 
 
+def normalize_employee(value):
+    if value is None or pd.isna(value):
+        return None
+
+    employee = str(value).strip()
+    if not employee or employee.lower() in {"nan", "none", "x"}:
+        return None
+
+    return employee.capitalize()
+
+
 def buildShiftText(date, d1_emp, d2_emp, n_emp, day, weekNumber, target_emp=None):
     return ShiftCalculator.build_text(date, d1_emp, d2_emp, n_emp, day, weekNumber, target_emp)
 
@@ -194,20 +215,9 @@ def createSheet(d1, d2, n, weekNumber, month, year, Styles, wb, employee_workboo
             if date > month_length:
                 break
             
-            d1_emp = d1[template_day][weekNumber]
-            if d1_emp:
-                d1_emp = str(d1_emp).strip().capitalize()
-            n_emp = n[template_day][weekNumber]
-            if n_emp:
-                n_emp = str(n_emp).strip().capitalize()
-            
-            d2_emp = d2[template_day][weekNumber]
-            if d2_emp:
-                d2_emp = str(d2_emp).strip()
-                if d2_emp and d2_emp.lower() != 'x':
-                    d2_emp = d2_emp.capitalize()
-                else:
-                    d2_emp = None
+            d1_emp = normalize_employee(d1[template_day][weekNumber])
+            n_emp = normalize_employee(n[template_day][weekNumber])
+            d2_emp = normalize_employee(d2[template_day][weekNumber])
             
             shift_text, _ = buildShiftText(date, d1_emp, d2_emp, n_emp, day, weekNumber)
             sheet.apply_cell_styling(ws, ScheduleSheet.DATA_START_ROW + week, col, shift_text)
@@ -274,7 +284,7 @@ def extractEmployees(d1, d2, n):
     employees.update(d1.values.flatten())
     employees.update(d2.values.flatten())
     employees.update(n.values.flatten())
-    employees = {str(e).strip().capitalize() for e in employees if e and str(e).strip() != 'x'}
+    employees = {employee for employee in (normalize_employee(e) for e in employees) if employee}
     return sorted(employees)
 
 def initializeEmployeeWorkbooks(employees):
