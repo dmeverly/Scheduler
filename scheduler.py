@@ -63,8 +63,6 @@ class ShiftCalculator:
         
         if day == 6:
             shift_text += f"\nTemplate Week {week_number}"
-            if target_emp is None:
-                shift_text += " - Dr. Amin"
         
         return shift_text, shift_type
 
